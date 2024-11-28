@@ -4,12 +4,11 @@ public class HangmanApp {
     private HangmanGame game;
     private Player player;
     private Scanner scanner;
-    private WordBank wordBank;
 
-    public HangmanApp(Player player, WordBank wordBank, int maxAttempts) {
+    public HangmanApp(Player player, int maxAttempts) {
         this.player = player;
-        this.wordBank = wordBank;
         this.scanner = new Scanner(System.in);
+        WordBank wordBank = new WordBank();
         String word = wordBank.getRandomWord();
         this.game = new HangmanGame(word, maxAttempts);
     }
