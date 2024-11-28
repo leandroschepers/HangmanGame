@@ -13,7 +13,6 @@ public class HangmanGame {
         this.attemptsLeft = maxAttempts;
         this.guessedLetters = new ArrayList<>();
     }
-
     public boolean isGameWon() {
         return !maskedWord.contains("_");
     }
