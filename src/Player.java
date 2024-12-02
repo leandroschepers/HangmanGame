@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 import java.util.List;
 
-public class Player {
+public class Player implements GameObserver {
     private String name;
     private int score;
     private List<GameHistory> gameHistory;
@@ -16,26 +16,8 @@ public class Player {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getScore() {
-        return score;
-    }
-
     public void incrementScore(int points) {
         this.score += points;
-    }
-
-    public List<GameHistory> getGameHistory() {
-        return gameHistory;
-    }
-
-
-    public void addGameToHistory(String word, boolean won, int attemptsLeft) {
-        GameHistory game = new GameHistory(word, won, attemptsLeft);
-        gameHistory.add(game);
     }
 
     public void displayGameHistory() {
@@ -48,4 +30,18 @@ public class Player {
             }
         }
     }
+
+    @Override
+    public void onGameEnd(String word, boolean won, int attemptsLeft) {
+        gameHistory.add(new GameHistory(word, won, attemptsLeft));
+        if (won) {
+            incrementScore(10);
+        }
+    }
+
+    public void addGameToHistory(String word, boolean won, int attemptsLeft) {
+        GameHistory game = new GameHistory(word, won, attemptsLeft);
+        gameHistory.add(game);
+    }
+
 }
