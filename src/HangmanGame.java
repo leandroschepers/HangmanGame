@@ -2,17 +2,31 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HangmanGame {
-    private String word;               // Palavra a ser adivinhada
-    private String maskedWord;         // Palavra mascarada com os espaços
-    private int attemptsLeft;          // Tentativas restantes
-    private List<Character> guessedLetters;  // Letras já adivinhadas
+    private String word;
+    private String maskedWord;
+    private int attemptsLeft;
+    private List<Character> guessedLetters;
+    private List<GameObserver> observers;
 
     public HangmanGame(String word, int maxAttempts) {
         this.word = word;
         this.maskedWord = "_".repeat(word.length());
         this.attemptsLeft = maxAttempts;
         this.guessedLetters = new ArrayList<>();
+        this.observers = new ArrayList<>();
     }
+
+    public void addObserver(GameObserver observer) {
+        observers.add(observer);
+    }
+
+    public void notifyObservers() {
+        boolean won = isGameWon();
+        for (GameObserver observer : observers) {
+            observer.onGameEnd(word, won, attemptsLeft);
+        }
+    }
+
     public boolean isGameWon() {
         return !maskedWord.contains("_");
     }
@@ -22,12 +36,15 @@ public class HangmanGame {
     }
 
     public boolean guessLetter(char letter) {
+        letter = Character.toLowerCase(letter); // Normaliza para letras minúsculas
+
         if (guessedLetters.contains(letter)) {
             System.out.println("Você já tentou essa letra.");
             return false;
         }
         guessedLetters.add(letter);
-        if (word.contains(String.valueOf(letter))) {
+
+        if (word.toLowerCase().contains(String.valueOf(letter))) {
             updateMaskedWord(letter);
             return true;
         } else {
@@ -35,6 +52,8 @@ public class HangmanGame {
             return false;
         }
     }
+
+
 
     private void updateMaskedWord(char letter) {
         StringBuilder updatedMaskedWord = new StringBuilder(maskedWord);
@@ -46,11 +65,6 @@ public class HangmanGame {
         maskedWord = updatedMaskedWord.toString();
     }
 
-    public void displayGameStatus() {
-        System.out.println("Palavra: " + maskedWord);
-        System.out.println("Tentativas restantes: " + attemptsLeft);
-    }
-
     public String getMaskedWord() {
         return maskedWord;
     }
@@ -58,5 +72,7 @@ public class HangmanGame {
     public int getAttemptsLeft() {
         return attemptsLeft;
     }
-
+    public String getWord() {
+        return word;
+    }
 }

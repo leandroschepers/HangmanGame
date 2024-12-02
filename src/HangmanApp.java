@@ -1,78 +1,44 @@
-import java.util.Scanner;
-
 public class HangmanApp {
-
     private HangmanGame game;
-
     private Player player;
-
-    private Scanner scanner;
+    private GameUI gameUI;
 
     public HangmanApp(Player player, int maxAttempts) {
-
         this.player = player;
-
-        this.scanner = new Scanner(System.in);
-
+        this.gameUI = new GameUI();
 
         WordBank wordBank = new WordBank();
-
         String word = wordBank.getRandomWord();
-
-
-        this.game = new HangmanGame(word, maxAttempts);
-
+        this.game = GameFactory.createGame(word, maxAttempts);
+        this.game.addObserver(player);
     }
 
-
     public void startGame() {
-
-        System.out.println("Bem-vindo ao Jogo da Forca, " + player.getName() + "!");
+        gameUI.displayMessage("Bem-vindo ao Jogo da Forca, " + player.getName() + "!");
 
         while (!game.isGameWon() && !game.isGameLost()) {
-
-            game.displayGameStatus();
-
-            System.out.print("Digite uma letra: ");
-
-            char guess = scanner.next().charAt(0);
+            gameUI.displayStatus(game.getMaskedWord(), game.getAttemptsLeft());
+            char guess = gameUI.getGuess();
 
             if (game.guessLetter(guess)) {
-
-                System.out.println("Boa! Você acertou.");
-
+                gameUI.displayMessage("Boa! Você acertou.");
             } else {
-
-                System.out.println("Ops! Você errou.");
-
+                gameUI.displayMessage("Ops! Você errou.");
             }
-
         }
 
         endGame();
-
     }
-
 
     private void endGame() {
-
         if (game.isGameWon()) {
-
             System.out.println("Parabéns! Você venceu.");
-
             player.incrementScore(10);
-
         } else {
-
-            System.out.println("Você perdeu. A palavra era: " + game.getMaskedWord());
-
+            System.out.println("Você perdeu. A palavra era: " + game.getWord());
         }
 
-        player.addGameToHistory(game.getMaskedWord(), game.isGameWon(), game.getAttemptsLeft());
-
+        player.addGameToHistory(game.getWord(), game.isGameWon(), game.getAttemptsLeft());
         player.displayGameHistory();
-
     }
-
 }
-
